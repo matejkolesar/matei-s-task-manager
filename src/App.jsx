@@ -335,23 +335,7 @@ function ListView({ listId, onBack }) {
 
   return (
     <div>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 32 }}>
-        <button onClick={onBack} style={{
-          background: "none", border: "none", cursor: "pointer", fontFamily: C.mono,
-          fontSize: 13, color: C.textFaint, padding: "4px 0",
-        }}>← new list</button>
-        <button onClick={copyLink} style={{
-          background: copied ? C.accent : C.btnMuted, border: "none", borderRadius: 8,
-          padding: "6px 14px", cursor: "pointer", fontFamily: C.mono,
-          fontSize: 12, color: copied ? "#fff" : C.textMuted, transition: "all 0.3s ease",
-        }}>{copied ? "link copied ✓" : "copy share link"}</button>
-      </div>
-
       <div style={{ marginBottom: 40 }}>
-        <div style={{
-          fontFamily: C.mono, fontSize: 11, letterSpacing: 4,
-          textTransform: "uppercase", color: C.accent, marginBottom: 16,
-        }}>⬡ shared list</div>
         <h1 style={{
           fontSize: 32, fontWeight: 700, color: C.text, margin: 0, lineHeight: 1.1,
           fontFamily: C.sans, letterSpacing: -0.5,
