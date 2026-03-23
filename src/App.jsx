@@ -117,14 +117,13 @@ function Checkbox({ checked, onChange }) {
       background: checked ? C.accent : "transparent",
       cursor: "pointer", display: "flex",
       alignItems: "center", justifyContent: "center", flexShrink: 0,
-      transition: "all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+      transition: "background 0.05s ease, border-color 0.05s ease",
     }}>
-      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{
-        opacity: checked ? 1 : 0, transition: "opacity 0.3s ease",
-        transform: checked ? "scale(1)" : "scale(0.5)",
-      }}>
-        <path d="M2.5 6L5 8.5L9.5 3.5" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-      </svg>
+      {checked && (
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M2.5 6L5 8.5L9.5 3.5" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      )}
     </button>
   );
 }
@@ -161,7 +160,13 @@ function TaskItem({ task, onToggle, onUpdate, onDelete, index }) {
     if (e.key === "Escape") handleCancel();
   };
 
+  const [localCompleted, setLocalCompleted] = useState(task.completed);
+
+  // Sync local state when task prop changes (e.g. from refresh)
+  useEffect(() => { setLocalCompleted(task.completed); }, [task.completed]);
+
   const handleToggle = () => {
+    setLocalCompleted(!localCompleted); // instant visual feedback
     setAnimating(true);
     setTimeout(() => { onToggle(task.id); setAnimating(false); }, 400);
   };
@@ -208,32 +213,32 @@ function TaskItem({ task, onToggle, onUpdate, onDelete, index }) {
   return (
     <div style={{
       padding: "18px 22px",
-      background: task.completed ? C.cardMuted : C.card,
+      background: localCompleted ? C.cardMuted : C.card,
       borderRadius: 14,
-      border: `1px solid ${task.completed ? C.borderLight : C.border}`,
+      border: `1px solid ${localCompleted ? C.borderLight : C.border}`,
       marginBottom: 6,
       display: "flex", alignItems: "flex-start", gap: 16,
       transition: "all 0.5s cubic-bezier(0.22, 1, 0.36, 1)",
       opacity: visible ? (animating ? 0.5 : 1) : 0,
       transform: visible ? (animating ? "translateX(20px)" : "translateX(0)") : "translateY(12px)",
       cursor: "pointer",
-      boxShadow: task.completed ? "none" : "0 1px 3px rgba(0,0,0,0.03)",
+      boxShadow: localCompleted ? "none" : "0 1px 3px rgba(0,0,0,0.03)",
     }} onClick={() => setEditing(true)}>
       <div style={{ paddingTop: 1 }} onClick={(e) => e.stopPropagation()}>
-        <Checkbox checked={task.completed} onChange={handleToggle} />
+        <Checkbox checked={localCompleted} onChange={handleToggle} />
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{
           fontSize: 15, fontWeight: 500,
-          color: task.completed ? C.textGhost : C.text,
+          color: localCompleted ? C.textGhost : C.text,
           fontFamily: C.sans,
-          textDecoration: task.completed ? "line-through" : "none",
+          textDecoration: localCompleted ? "line-through" : "none",
           textDecorationColor: C.textDimmed,
           transition: "all 0.4s ease",
         }}>{task.name}</div>
         {task.notes && (
           <div style={{
-            fontSize: 13, color: task.completed ? "#d8dae0" : C.textMuted, marginTop: 5,
+            fontSize: 13, color: localCompleted ? "#d8dae0" : C.textMuted, marginTop: 5,
             fontFamily: C.sans, lineHeight: 1.4,
             transition: "color 0.4s ease",
           }}>{task.notes}</div>
